@@ -145,7 +145,67 @@ function number(values, offset) {
 	}
 	
 	this.mult = function (number) {
-		// Code runs away
+			
+		var finalV = [];	
+		var maxA   = this.vals.length - 1;
+		var maxB   = number.vals.length - 1;
+	
+		// Compute (mult)
+		for (var i = 0; i <= maxA; i++) {
+			for (var j = 0; j <= maxB; j++) {
+			
+				var o = (maxA - i) + (maxB - j);
+				var m = this.vals[i] * number.vals[j];
+				
+				// Format : [ thousands, units, offset ] (> 1000) OR [ units, offset ]
+				if (m >= 1000) 
+					finalV.push([Math.floor(m / 1000), m - (1000 * Math.floor(m / 1000)), o]);
+				else 
+					finalV.push([m, o]);
+				
+			}
+		}
+		
+		
+		// Format finalV[0] (ref)
+		var pad = finalV[0][finalV[0].length - 1];
+		finalV[0][finalV[0].length - 1] = 0;
+		for (i = 1; i < pad; i++)
+			finalV[0].push(0);
+		var ref = finalV[0];	
+		
+		// Concatenate (add)
+		for (i = 1; i < finalV.length; i++) {
+			
+			var add   = finalV[i];
+			var off   = add[add.length - 1];
+			var index = ref.length - off - 1;
+			
+			// Ignore last value (offset)
+			for (j = add.length - 2; j >= 0; j--) {
+			
+				ref[index] += add[j];
+				if (ref[index] >= 1000) {
+					ref[index - 1] += Math.floor(ref[index] / 1000);
+					ref[index] -= 1000 * Math.floor(ref[index] / 1000);
+				}
+				
+				index--;
+				
+			}
+			
+		}
+		
+		// Offset
+		this.offset = 0;
+		i = ref.length;
+		while (ref[--i] == 0)
+			this.offset++;
+		
+		// Vals
+		ref.splice(ref.length - this.offset, this.offset);
+		this.vals = ref;
+		
 	}
 
 	/* Debug */

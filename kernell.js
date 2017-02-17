@@ -5,6 +5,13 @@ function kernell() {
 	this.totalUnits = new number([0], 0);
 	this.unitsPerS  = new number([0], 0);
 	this.unitsPerC  = new number([100], 0);
+	
+	// Multiplication test (success)
+	this.a = new number([999, 999, 999],0);
+	this.b = new number([999, 999],0);
+	this.a.log(); console.log("x"); this.b.log(); console.log("=");
+	this.a.mult(this.b);
+	this.a.log();
 
 	this.click = function() {
 	
@@ -13,7 +20,7 @@ function kernell() {
 		
 	}
 
-	/* ------------------------------- Intervals ------------------------------ */
+	/* ------------------------------- Intervals ------------------------------ *
 	
 	setInterval(function() {
 		updateTotalUnits();
