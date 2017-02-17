@@ -1,0 +1,65 @@
+<html>
+
+    <head>
+	
+        <title>Units Clickers</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="style.css" type="text/css" rel="stylesheet"/>
+        <script src="jquery-3.1.1.min.js"></script>
+        <script src="generator.js"></script>
+        <script src="number.js"></script>
+        <script src="kernell.js"></script>
+		<script>
+			var kernel = new kernell();
+		</script>
+		
+    </head>
+
+    <body>
+
+        <section id="sectionUpgrade">
+
+            <section id="multiplicators">
+                <h2>Multiplicators</h2>
+                <table>
+                    <tr><td>1</td><td>2</td><td>3</td><td>4</td></tr>
+                    <tr><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+                </table>
+            </section>
+
+            <section id="generators">
+                <h2>Generators</h2>
+                <table id="table_generators">
+
+                </table>
+            </section>
+
+        </section>
+
+
+        <section id="sectionClick">
+
+            <p id="totalUnits">0</p>
+            <p>Units</p>
+
+            <section id="zoneClick">
+                <img src="./img/img_default.png" height="80%" onclick="kernel.click();" onmousedown="style = 'height:85%'" onmouseup="style = 'height:80%'" />
+            </section>
+
+            <p id="unitsPerS">0</p>
+            <p>U / s</p>
+
+        </section>
+
+        <section id="sectionStats"> </section>
+        <script>
+            $(document).ready(function () {
+				
+                kernel.loadGenerators();
+				
+            });
+
+        </script>
+    </body>
+</html>

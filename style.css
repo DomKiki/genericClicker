@@ -1,0 +1,74 @@
+html {
+    height: 100%;
+}
+body {
+    min-height: 100%;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    font-family: arial;
+}
+p {
+    margin: 0px;
+    padding: 0px;
+}
+h2 {
+    text-align: center;
+}
+#sectionClick{
+    position: relative;
+    float: left;
+    height: 100%;
+    width: 34%;
+    background-color: #eeeeee;
+    text-align: center;
+}
+#sectionStats{
+    position: relative;
+    float: right;
+    height: 100%;
+    width: 33%;
+    background-color: white;
+}
+#sectionUpgrade{
+    position: relative;
+    float: left;
+    height: 100%;
+    width: 33%;
+    background-color: white;
+}
+#totalUnits{
+    margin-top: 40%;
+    font-size: 50px;
+}
+#unitsPerS{
+    font-size: 35px;
+}
+#zoneClick{
+    height: 30%;
+
+}
+#zoneClick img{
+    vertical-align: middle;
+}
+
+
+
+#generators{
+    margin-top: 10%;
+    height: 30%;
+}
+#multiplicators {
+    margin-top: 10%;
+    height: 30%;
+}
+table{
+    width: 100%;
+    height: 100%;
+}
+td{
+    width: 25%;
+    border:solid black 1px;
+    height: 33%;
+    text-align: center;
+}
