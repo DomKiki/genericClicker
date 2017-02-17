@@ -17,10 +17,11 @@ function generator(d, n, p, i, r) {
 	}
 	
 	this.updateIncome = function() {
-		// Code was here
+		// Same, need mult
+		this.income.add(this.income);
 	}
 	
-	this.updateLevel = function(amount) { 
+	this.update = function(amount) { 
 		this.level += amount;
 		this.updatePrice();
 		this.updateIncome();
