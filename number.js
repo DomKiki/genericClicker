@@ -147,14 +147,14 @@ function number(values, offset) {
 	this.mult = function (number) {
 			
 		var finalV = [];	
-		var maxA   = this.vals.length - 1;
-		var maxB   = number.vals.length - 1;
+		var maxI   = this.vals.length - 1;
+		var maxJ   = number.vals.length - 1;
 	
 		// Compute (mult)
-		for (var i = 0; i <= maxA; i++) {
-			for (var j = 0; j <= maxB; j++) {
+		for (var i = 0; i <= maxI; i++) {
+			for (var j = 0; j <= maxJ; j++) {
 			
-				var o = (maxA - i) + (maxB - j);
+				var o = (maxI - i) + (maxJ - j);
 				var m = this.vals[i] * number.vals[j];
 				
 				// Format : [ thousands, units, offset ] (> 1000) OR [ units, offset ]
@@ -183,18 +183,18 @@ function number(values, offset) {
 			
 			// Ignore last value (offset)
 			for (j = add.length - 2; j >= 0; j--) {
-			
 				ref[index] += add[j];
-				if (ref[index] >= 1000) {
-					ref[index - 1] += Math.floor(ref[index] / 1000);
-					ref[index] -= 1000 * Math.floor(ref[index] / 1000);
-				}
-				
 				index--;
-				
 			}
 			
 		}
+		
+		// Check that no value > 1000
+		for (i = (ref.length - 1); i > 0; i--)
+			if (ref[i] >= 1000) {
+				ref[i - 1] += Math.floor(ref[i] / 1000);
+				ref[i] -= 1000 * Math.floor(ref[i] / 1000);
+			}
 		
 		// Offset
 		this.offset = 0;
