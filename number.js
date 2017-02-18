@@ -154,14 +154,17 @@ function number(values, offset) {
 		for (var i = 0; i <= maxI; i++) {
 			for (var j = 0; j <= maxJ; j++) {
 			
-				var o = (maxI - i) + (maxJ - j);
+				var oI = this.offset + (maxI - i);
+				var oJ = number.offset + (maxJ - j);
+				var off = oI + oJ;
 				var m = this.vals[i] * number.vals[j];
 				
+				// 0 <= m <= 998'001 (999x999)
 				// Format : [ thousands, units, offset ] (> 1000) OR [ units, offset ]
 				if (m >= 1000) 
-					finalV.push([Math.floor(m / 1000), m - (1000 * Math.floor(m / 1000)), o]);
+					finalV.push([Math.floor(m / 1000), m - (1000 * Math.floor(m / 1000)), off]);
 				else 
-					finalV.push([m, o]);
+					finalV.push([m, off]);
 				
 			}
 		}
@@ -188,7 +191,6 @@ function number(values, offset) {
 			}
 			
 		}
-		
 		// Check that no value > 1000
 		for (i = (ref.length - 1); i > 0; i--)
 			if (ref[i] >= 1000) {

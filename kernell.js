@@ -7,8 +7,8 @@ function kernell() {
 	this.unitsPerC  = new number([100], 0);
 	
 	// Multiplication test (success)
-	this.a = new number([123, 999, 999, 999, 999, 999, 999],0);
-	this.b = new number([999, 999, 999],0);
+	this.a = new number([999, 999], 3);
+	this.b = new number([999, 999], 2);
 	this.a.log(); console.log("x"); this.b.log(); console.log("=");
 	this.a.mult(this.b);
 	this.a.log();
