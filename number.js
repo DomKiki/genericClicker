@@ -82,7 +82,7 @@ function number(values, offset) {
 			}
 		}
 		
-		// Equalize arrys length
+		// Equalize arrays length
 		if (this.vals.length != number.vals.length) {
 			var diff = this.vals.length - number.vals.length;
 			if (diff > 0)
@@ -115,6 +115,12 @@ function number(values, offset) {
 			
 		}
 		
+		// Removing zeros and refreshing offset
+		i = this.vals.length;
+			while (this.vals[--i] == 0)
+				this.offset++;
+		this.vals.splice(this.vals.length - this.offset, this.offset);
+		
     }
 
 	this.sub = function (number) {
@@ -133,13 +139,27 @@ function number(values, offset) {
 		}
 		
 		// Proper substraction
-		for (var i = (this.vals.length - 1); i >= 0; i--) {
-            var s = this.vals[i] - number.vals[i];
-            if (s < 0) {
-                this.vals[i - 1]--;
-                this.vals[i] = s + 1000;
-            } else
-                this.vals[i] = s;
+		i = this.vals.length - 1;
+		for (var j = (number.vals.length - 1); j >= 0; j--) {
+			
+			var s = this.vals[i] - number.vals[j];
+			if (s < 0) {
+			
+				// Where to decrement (index)
+				var index = i;
+				while (this.vals[--index] == 0) continue;
+				this.vals[index]--;
+				
+				// Back-propagation
+				while (index++ < (i - 1))
+					this.vals[index] += 999; // + 1000 - 1
+				this.vals[index] = s + 1000;
+				
+			} else
+				this.vals[i] = s;
+				
+			i--;
+			
         }
 		
 	}

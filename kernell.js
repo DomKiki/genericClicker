@@ -1,17 +1,9 @@
 function kernell() {
 
-
 	this.generators = new Array(12);
 	this.totalUnits = new number([0], 0);
 	this.unitsPerS  = new number([0], 0);
-	this.unitsPerC  = new number([100], 0);
-	
-	// Multiplication test (success)
-	var a = new number([600, 800], 0);
-	var b = 4.23;
-	a.log(); console.log("x " + b + " =");
-	a.mult(b);
-	a.log();
+	this.unitsPerC  = new number([1], 0);
 
 	this.click = function() {
 	
@@ -75,12 +67,12 @@ function kernell() {
 		return "<td id='generator_" + id + "' onclick='kernel.addGenerator(" + id + ")'>" + g.name + " (" + g.level + ")<br>" + g.price.toString() + "</td>";
 	}
 	
-	this.loadGenerators = function() {
+	this.loadGenerators = function(file) {
 
 		// REPLACE BY LOAD FROM FILE !!
 
 		for (var i = 0; i < 12; i++)
-			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), new number([10], 0), 1.5);
+			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), new number([1], 0), 1.5);
 		this.initGenerators();
 
 	}
