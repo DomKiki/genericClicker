@@ -7,11 +7,11 @@ function kernell() {
 	this.unitsPerC  = new number([100], 0);
 	
 	// Multiplication test (success)
-	this.a = new number([999, 999], 3);
-	this.b = new number([999, 999], 2);
-	this.a.log(); console.log("x"); this.b.log(); console.log("=");
-	this.a.mult(this.b);
-	this.a.log();
+	var a = new number([600, 800], 0);
+	var b = 4.23;
+	a.log(); console.log("x " + b + " =");
+	a.mult(b);
+	a.log();
 
 	this.click = function() {
 	

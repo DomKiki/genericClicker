@@ -144,69 +144,105 @@ function number(values, offset) {
 		
 	}
 	
+	// What about values m < 0 ???
+	// Should back-propagate decimal part to lower units
 	this.mult = function (number) {
-			
-		var finalV = [];	
-		var maxI   = this.vals.length - 1;
-		var maxJ   = number.vals.length - 1;
 	
-		// Compute (mult)
-		for (var i = 0; i <= maxI; i++) {
-			for (var j = 0; j <= maxJ; j++) {
+		var i, j, m;
 			
-				var oI = this.offset + (maxI - i);
-				var oJ = number.offset + (maxJ - j);
-				var off = oI + oJ;
-				var m = this.vals[i] * number.vals[j];
-				
-				// 0 <= m <= 998'001 (999x999)
-				// Format : [ thousands, units, offset ] (> 1000) OR [ units, offset ]
-				if (m >= 1000) 
-					finalV.push([Math.floor(m / 1000), m - (1000 * Math.floor(m / 1000)), off]);
-				else 
-					finalV.push([m, off]);
-				
+		// Mult by float
+		if (typeof number === "number") {
+			
+			for (i = (this.vals.length - 1); i >= 0; i--) {
+				m = Math.floor(this.vals[i] * number);
+				this.vals[i] = m;
 			}
-		}
-		
-		
-		// Format finalV[0] (ref)
-		var pad = finalV[0][finalV[0].length - 1];
-		finalV[0][finalV[0].length - 1] = 0;
-		for (i = 1; i < pad; i++)
-			finalV[0].push(0);
-		var ref = finalV[0];	
-		
-		// Concatenate (add)
-		for (i = 1; i < finalV.length; i++) {
 			
-			var add   = finalV[i];
-			var off   = add[add.length - 1];
-			var index = ref.length - off - 1;
-			
-			// Ignore last value (offset)
-			for (j = add.length - 2; j >= 0; j--) {
-				ref[index] += add[j];
-				index--;
+			// Check no value > 1000
+			for (i = (this.vals.length - 1); i >= 0; i--) {
+				m = this.vals[i];
+				if (m >= 1000) {
+					var thous = Math.floor(m / 1000);
+					var units = m - (1000 * Math.floor(m / 1000));
+					if (i == 0) {
+						this.vals.unshift(thous); 
+						this.vals[1] = units;
+					}
+					else {
+						this.vals[i] = units;
+						this.vals[i - 1] += thous; 
+					}
+				}
 			}
 			
 		}
-		// Check that no value > 1000
-		for (i = (ref.length - 1); i > 0; i--)
-			if (ref[i] >= 1000) {
-				ref[i - 1] += Math.floor(ref[i] / 1000);
-				ref[i] -= 1000 * Math.floor(ref[i] / 1000);
+		
+		// Mult by number (structure)
+		else if (typeof number === "object") {
+		
+			var finalV = [];	
+			var maxI   = this.vals.length - 1;
+			var maxJ   = number.vals.length - 1;
+		
+			// Compute (mult)
+			for (i = 0; i <= maxI; i++) {
+				for (j = 0; j <= maxJ; j++) {
+				
+					var oI  = this.offset   + (maxI - i);
+					var oJ  = number.offset + (maxJ - j);
+					var off = oI + oJ;
+					m       = this.vals[i] * number.vals[j];
+					
+					// 0 <= m <= 998'001 (999x999)
+					// Format : [ thousands, units, offset ] (> 1000) OR [ units, offset ]
+					if (m >= 1000) 
+						finalV.push([Math.floor(m / 1000), m - (1000 * Math.floor(m / 1000)), off]);
+					else 
+						finalV.push([m, off]);
+					
+				}
 			}
-		
-		// Offset
-		this.offset = 0;
-		i = ref.length;
-		while (ref[--i] == 0)
-			this.offset++;
-		
-		// Vals
-		ref.splice(ref.length - this.offset, this.offset);
-		this.vals = ref;
+			
+			
+			// Format finalV[0] (ref)
+			var pad = finalV[0][finalV[0].length - 1];
+			finalV[0][finalV[0].length - 1] = 0;
+			for (i = 1; i < pad; i++)
+				finalV[0].push(0);
+			var ref = finalV[0];	
+			
+			// Concatenate (add)
+			for (i = 1; i < finalV.length; i++) {
+				
+				var add   = finalV[i];
+				var off   = add[add.length - 1];
+				var index = ref.length - off - 1;
+				
+				// Ignore last value (offset)
+				for (j = add.length - 2; j >= 0; j--) {
+					ref[index] += add[j];
+					index--;
+				}
+				
+			}
+			// Check that no value > 1000
+			for (i = (ref.length - 1); i > 0; i--)
+				if (ref[i] >= 1000) {
+					ref[i - 1] += Math.floor(ref[i] / 1000);
+					ref[i] -= 1000 * Math.floor(ref[i] / 1000);
+				}
+			
+			// Offset
+			this.offset = 0;
+			i = ref.length;
+			while (ref[--i] == 0)
+				this.offset++;
+			
+			// Vals
+			ref.splice(ref.length - this.offset, this.offset);
+			this.vals = ref;
+			
+		}
 		
 	}
 
