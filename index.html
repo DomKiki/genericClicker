@@ -19,6 +19,11 @@
     <body>
 
         <section id="sectionUpgrade">
+		
+			<input type="file" id="file-input" />
+			<script>
+				document.getElementById('file-input').addEventListener('change', kernel.readSingleFile, false);
+			</script>
 
             <section id="multiplicators">
                 <h2>Multiplicators</h2>

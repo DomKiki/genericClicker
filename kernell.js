@@ -11,6 +11,51 @@ function kernell() {
 		this.display("totalUnits", this.totalUnits);
 		
 	}
+	
+	/* --------------------------------- I / O -------------------------------- */
+	
+	this.readSingleFile = function(e) {
+	
+		var file = e.target.files[0];
+		if (!file) return;
+  
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			console.log(e.target.result);
+			//this.formatGenerators(e.target.result);
+			//this.initGenerators();
+		};
+		reader.readAsText(file);
+	}
+	
+	this.formatGenerators = function(str) {
+	
+		var cpt  = 0;
+		var strs = str.split("\r\n");
+		this.generators = new Array(strs.length);
+		console.log(strs);
+		
+		strs.forEach(function(line) {
+		
+			var l = line.split(";");
+		
+			// Price
+			var price_vals = l[1].split(",");
+			var price_o = price_vals[price_vals.length - 1];
+			price_vals.splice(price_vals.length - 1, 1);
+			// Income
+			var income_vals = l[2].split(",");
+			var income_o = income_vals[income_vals.length - 1];
+			income_vals.splice(income_vals.length - 1, 1);
+			
+			// Instantiate generator
+			this.generators[cpt] = new generator(cpt, l[0], new number(price_vals, price_o), new number(income_vals, income_o), l[3]);
+			
+			cpt++;
+			
+		});
+	
+	}
 
 	/* ------------------------------- Intervals ------------------------------ *
 	
@@ -67,9 +112,7 @@ function kernell() {
 		return "<td id='generator_" + id + "' onclick='kernel.addGenerator(" + id + ")'>" + g.name + " (" + g.level + ")<br>" + g.price.toString() + "</td>";
 	}
 	
-	this.loadGenerators = function(file) {
-
-		// REPLACE BY LOAD FROM FILE !!
+	this.loadGenerators = function(e) {
 
 		for (var i = 0; i < 12; i++)
 			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), new number([1], 0), 1.5);
@@ -79,6 +122,10 @@ function kernell() {
 
 	this.initGenerators = function() {
 	
+		// Reset table content
+		document.getElementById("table_generators").innerHTML = "";
+	
+		// Fill with this.generators
 		for (var i = 0; i < 3; i++) {
 			$("#table_generators").append("<tr>");
 			for (var j = 0; j < 4; j++) {
