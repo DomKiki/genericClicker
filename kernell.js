@@ -56,12 +56,6 @@ function kernell() {
 		});
 	
 	}
-
-	/* ------------------------------- Intervals ------------------------------ *
-	
-	setInterval(function() {
-		updateTotalUnits();
-	}, 1000);
 	
 	/* -------------------------------- Display ------------------------------- */
 	
@@ -155,8 +149,7 @@ function kernell() {
 			this.display("unitsPerS",  this.unitsPerS);
 			this.display("totalUnits", this.totalUnits);
 			
-		} else 
-			console.log("Not enough units in bank for generator " + id + ".");
+		}
 
 	}
 	

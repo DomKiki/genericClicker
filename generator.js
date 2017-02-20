@@ -29,14 +29,19 @@ function generator(d, n, p, i, r) {
 		
 	}
 	
+	this.updateRate = function(amount) {
+	
+		this.rate *= (1 + (amount * 0.1));
+	
+	}
+	
 	this.update = function(amount) { 
+	
 		this.level += amount;
 		this.updatePrice();
 		this.updateIncome();
-	}
-	
-	this.getPrice = function(amount) {
-		return (this.price * amount * rate);
+		this.updateRate(amount);
+		
 	}
 
 }

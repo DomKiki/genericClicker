@@ -51,21 +51,32 @@ function number(values, offset) {
 				this.vals.unshift(num);
 				
 	}
-		
-	/* Operations */
+	
 	this.toString = function (delim) { 
 	
 		if (delim == null) delim = ".";
 		
 		var str;
 		if (this.vals.length > 1)
-			str = this.vals[0].toString() + delim + this.vals[1].toString(); // Format this.vals[1] as XXX !
+			str = this.vals[0].toString() + delim + this.format(this.vals[1], 3);
 		else
 			str = this.vals[0].toString();
 			
 		return str + " " + labels[this.vals.length + this.offset - 1];
 		
 	}
+	
+	this.format = function(digits, num) {
+	
+		var str = digits.toString();
+		if (str.length < num)
+			for (var i = str.length; i < num; i++)
+				str = "0" + str;
+		return str;
+	
+	}
+		
+	/* Operations */
 	
 	this.add = function (number) {
 
@@ -117,9 +128,11 @@ function number(values, offset) {
 		
 		// Removing zeros and refreshing offset
 		i = this.vals.length;
-			while (this.vals[--i] == 0)
-				this.offset++;
+			while ((this.vals[--i] == 0) && (i > 0))
+				this.offset++; 
 		this.vals.splice(this.vals.length - this.offset, this.offset);
+		// If result = 0 then this.vals should be empty, so we just push a value into it
+		//if (this.vals.length == 0) this.vals.push(0);
 		
     }
 

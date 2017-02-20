@@ -11,7 +11,14 @@
         <script src="number.js"></script>
         <script src="kernell.js"></script>
 		<script>
+		
 			var kernel = new kernell();
+			
+			setInterval(function() {
+				kernel.updateTotalUnits();
+				kernel.display("totalUnits", kernel.totalUnits);
+			}, 1000);
+			
 		</script>
 		
     </head>
