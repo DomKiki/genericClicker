@@ -12,8 +12,9 @@
         <script src="kernell.js"></script>
 		<script>
 		
-			var kernel = new kernell();
+			var kernel = new kernell(100);
 			
+			// Change 1000
 			setInterval(function() {
 				kernel.updateTotalUnits();
 				kernel.display("totalUnits", kernel.totalUnits);

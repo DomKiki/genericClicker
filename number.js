@@ -9,6 +9,8 @@ function number(values, offset) {
 
 	/* Functions */
 	
+	this.clone = function() { return new number(this.vals.slice(), this.offset); }
+	
 	this.isGreater = function (number) {
 	
 		

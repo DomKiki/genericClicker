@@ -4,3 +4,5 @@
 - Kernel
     setInterval() 		Units display
 	formatGenerators()	Fill generators[] with data from file
+	
+- Catch Raikou

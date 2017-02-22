@@ -1,9 +1,15 @@
-function kernell() {
+function kernell(ms) {
 
+	this.tickMs     = ms;
+	
+	// Buildings
 	this.generators = new Array(12);
+	
+	// Values
 	this.totalUnits = new number([0], 0);
+	this.unitsPerT  = new number([0], 0);
 	this.unitsPerS  = new number([0], 0);
-	this.unitsPerC  = new number([1], 0);
+	this.unitsPerC  = new number([10], 0);
 
 	this.click = function() {
 	
@@ -48,10 +54,8 @@ function kernell() {
 			var income_o = income_vals[income_vals.length - 1];
 			income_vals.splice(income_vals.length - 1, 1);
 			
-			// Instantiate generator
-			this.generators[cpt] = new generator(cpt, l[0], new number(price_vals, price_o), new number(income_vals, income_o), l[3]);
-			
-			cpt++;
+			// Instantiate generator (and inc cpt)
+			this.generators[cpt] = new generator(cpt++, l[0], new number(price_vals, price_o), new number(income_vals, income_o), l[3]);
 			
 		});
 	
@@ -69,20 +73,33 @@ function kernell() {
 		this.totalUnits.add(this.unitsPerS);
 	}
 	
+	this.updateUnitsPerT = function() {
+		
+		var u     = this.unitsPerS.clone();
+		var tick  = Math.floor(1000 / this.tickMs);
+		
+		/* If offset = 0, check that number can be divided by (1/tick)
+		if ((u.offset != 0) || 
+		   ((u.offset == 0) && (u.vals[0] >= (1.0 / tick))) { */
+			u.mult((1.0 / tick));
+			this.unitsPerT = u;
+			console.log(this.unitsPerS + "U/s => " + this.unitsPerT + "U/" + this.tickMs + " ms");
+		//}
+		
+	}
+	
 	this.updateUnitsPerS = function() {
 
-		var totalIncome = new number([0], 0);
-		generators.forEach(function (g) {
-			var income = new number([g.income * g.level], 0);
-			totalIncome.add(income_ln);
-		})
-		return totalIncome;
+		var s = new number([0], 0);
+		this.generators.forEach(function (g) {
+			s.add(new number([g.income * g.level], 0));
+		});
+		this.unitsPerS = s;
 		
 	}
 	
 	this.updateUnitsPerC = function() {
 		// Code is somewhere around here
-		// Need some sort of division
 	}
 	
 	/* ------------------------------ Generators ------------------------------ */
@@ -103,13 +120,13 @@ function kernell() {
 	
 	this.printGeneratorHTML = function(id) {
 		var g = this.generators[id];
-		return "<td id='generator_" + id + "' onclick='kernel.addGenerator(" + id + ")'>" + g.name + " (" + g.level + ")<br>" + g.price.toString() + "</td>";
+		return "<td id='generator_" + id + "' onclick='kernel.addGenerator(" + id + ")'>" + g.name + "<br> x" + g.level + "<br>" + g.price.toString() + "</td>";
 	}
 	
 	this.loadGenerators = function(e) {
 
 		for (var i = 0; i < 12; i++)
-			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), new number([1], 0), 1.5);
+			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), new number([10], 0), 1.5);
 		this.initGenerators();
 
 	}
@@ -137,12 +154,15 @@ function kernell() {
 		// If enough units in bank
 		if (this.totalUnits.isGreater(this.generators[id].price)) {
 		
-			// Substract
+			// Substract from bank
 			this.totalUnits.sub(this.generators[id].price);
-			// Inc unitsPerS
-			this.unitsPerS.add(this.generators[id].income);
+			
 			// Update generator level
 			this.generators[id].update(1);
+			// Update unitsPerS, unitsPerT and unitsPerC
+			this.updateUnitsPerS();
+			this.updateUnitsPerT();
+			this.updateUnitsPerC();
 			
 			// Display generatorm unitsPerS and totalUnits
 			this.updateGenerator(id);
@@ -156,7 +176,7 @@ function kernell() {
 	this.updateGenerator = function(id) {
 	
 		var g = this.generators[id];
-		var s = g.name + " (" + g.level + ")<br>" + g.price.toString();
+		var s = g.name + "<br> x" + g.level + "<br>" + g.price.toString();
 		document.getElementById("generator_" + id).innerHTML = s;
 		
 	}
