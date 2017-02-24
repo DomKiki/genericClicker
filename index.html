@@ -14,11 +14,13 @@
 		
 			var kernel = new kernell(100);
 			
-			// Change 1000
-			setInterval(function() {
+			var updateTotalUnitsInterval = function() {
 				kernel.updateTotalUnits();
 				kernel.display("totalUnits", kernel.totalUnits);
-			}, 1000);
+			}
+			
+			// tickMs update useless, setInterval called once
+			setInterval(updateTotalUnitsInterval(), kernel.tickMs);
 			
 		</script>
 		

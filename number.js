@@ -1,5 +1,10 @@
 var labels = ["", "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion"];
 
+/* Constants */
+
+number.ZERO = function() { return new number([0], 0); }
+number.ONE  = function() { return new number([1], 0); }
+
 function number(values, offset) {
 
 	/* Constructor */
@@ -58,13 +63,18 @@ function number(values, offset) {
 	
 		if (delim == null) delim = ".";
 		
+		// Value
 		var str;
 		if (this.vals.length > 1)
 			str = this.vals[0].toString() + delim + this.format(this.vals[1], 3);
 		else
 			str = this.vals[0].toString();
-			
-		return str + " " + labels[this.vals.length + this.offset - 1];
+		
+		// Unit
+		var label = labels[this.vals.length + this.offset - 1];
+		if (label != "") str += " " + label;
+		
+		return str;
 		
 	}
 	
@@ -81,7 +91,7 @@ function number(values, offset) {
 	/* Operations */
 	
 	this.add = function (number) {
-
+	
 		// Equalize offsets
 		if (this.offset != number.offset) {
 			var diff = this.offset - number.offset;

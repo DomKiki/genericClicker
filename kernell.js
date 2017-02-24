@@ -1,15 +1,17 @@
 function kernell(ms) {
 
-	this.tickMs     = ms;
+	this.tickDef    = 1000;
+	this.tickUser   = ms;
+	this.tickMs     = this.tickDef;
 	
 	// Buildings
 	this.generators = new Array(12);
 	
 	// Values
-	this.totalUnits = new number([0], 0);
-	this.unitsPerT  = new number([0], 0);
-	this.unitsPerS  = new number([0], 0);
-	this.unitsPerC  = new number([10], 0);
+	this.totalUnits = number.ZERO();
+	this.unitsPerT  = number.ZERO();
+	this.unitsPerS  = number.ZERO();
+	this.unitsPerC  = new number([10], 0); // number.ONE();
 
 	this.click = function() {
 	
@@ -67,10 +69,22 @@ function kernell(ms) {
 		document.getElementById(element).innerHTML = number.toString();
 	}
 	
-	/* -------------------------------- Updates ------------------------------- */
+	/* ----------------------------- Units Updates ---------------------------- */
 
 	this.updateTotalUnits = function() {
-		this.totalUnits.add(this.unitsPerS);
+	
+		// One tick or one second ?
+		if (this.unitsPerT != 0) {
+			this.totalUnits.add(this.unitsPerT);
+			if (this.tickMs == this.tickDef)
+				this.tickMs = this.tickUser;
+		}
+		else { 
+			this.totalUnits.add(this.unitsPerS);
+			if (this.tickMs == this.tickUser)
+				this.tickMs = this.tickDef;
+		}
+			
 	}
 	
 	this.updateUnitsPerT = function() {
@@ -78,21 +92,23 @@ function kernell(ms) {
 		var u     = this.unitsPerS.clone();
 		var tick  = Math.floor(1000 / this.tickMs);
 		
-		/* If offset = 0, check that number can be divided by (1/tick)
+		// If offset = 0, check that number can be divided by (1/tick)
 		if ((u.offset != 0) || 
-		   ((u.offset == 0) && (u.vals[0] >= (1.0 / tick))) { */
+		    (u.offset == 0) && (u.vals[0] >= (1.0 / tick))) {
 			u.mult((1.0 / tick));
 			this.unitsPerT = u;
-			console.log(this.unitsPerS + "U/s => " + this.unitsPerT + "U/" + this.tickMs + " ms");
-		//}
+			console.log(this.unitsPerS + " U/s => " + this.unitsPerT + " U/" + this.tickMs + " ms");
+		}
+		else
+			this.unitsPerT = number.ZERO();
 		
 	}
 	
 	this.updateUnitsPerS = function() {
 
-		var s = new number([0], 0);
+		var s = number.ZERO();
 		this.generators.forEach(function (g) {
-			s.add(new number([g.income * g.level], 0));
+			s.add(g.income.clone());
 		});
 		this.unitsPerS = s;
 		
@@ -126,7 +142,7 @@ function kernell(ms) {
 	this.loadGenerators = function(e) {
 
 		for (var i = 0; i < 12; i++)
-			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), new number([10], 0), 1.5);
+			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), number.ONE(), 1.5);
 		this.initGenerators();
 
 	}
