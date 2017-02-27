@@ -42,5 +42,5 @@ function generator(d, n, p, i, r) {
 		this.updateRate(amount);
 		
 	}
-
+	
 }

@@ -1,9 +1,9 @@
-var labels = ["", "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion"];
-
 /* Constants */
 
 number.ZERO = function() { return new number([0], 0); }
 number.ONE  = function() { return new number([1], 0); }
+
+var labels = ["", "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion"];
 
 function number(values, offset) {
 
@@ -71,6 +71,7 @@ function number(values, offset) {
 			str = this.vals[0].toString();
 		
 		// Unit
+		console.log(this.vals.length + " + " + this.offset + " - 1 = " + (this.vals.length+this.offset-1));
 		var label = labels[this.vals.length + this.offset - 1];
 		if (label != "") str += " " + label;
 		

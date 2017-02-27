@@ -1,17 +1,23 @@
-function kernell(ms) {
+function kernel(ms) {
+
+	// Context persistency
+	var self = this;
 
 	this.tickDef    = 1000;
 	this.tickUser   = ms;
 	this.tickMs     = this.tickDef;
 	
+	// Display
+	this.itemsByRow = 4;
+	
 	// Buildings
-	this.generators = new Array(12);
+	this.generators = null;
 	
 	// Values
 	this.totalUnits = number.ZERO();
 	this.unitsPerT  = number.ZERO();
 	this.unitsPerS  = number.ZERO();
-	this.unitsPerC  = new number([10], 0); // number.ONE();
+	this.unitsPerC  = number.ONE();
 
 	this.click = function() {
 	
@@ -22,27 +28,35 @@ function kernell(ms) {
 	
 	/* --------------------------------- I / O -------------------------------- */
 	
-	this.readSingleFile = function(e) {
 	
+	this.readSingleFile = function(e) {
+		
 		var file = e.target.files[0];
-		if (!file) return;
+		if (!file) return null;
   
 		var reader = new FileReader();
-		reader.onload = function(e) {
-			console.log(e.target.result);
-			//this.formatGenerators(e.target.result);
-			//this.initGenerators();
+		reader.onload = function(e) { 
+		
+			self.formatGenerators(e.target.result); 
+			
+			var rows = Math.round(self.generators.length / self.itemsByRow);
+			if ((self.generators.length % self.itemsByRow) != 0) 
+				rows++;
+				
+			self.initGenerators(rows, self.itemsByRow);
+			
 		};
 		reader.readAsText(file);
+				
 	}
 	
-	this.formatGenerators = function(str) {
+	this.formatGenerators = function(content) {
 	
 		var cpt  = 0;
-		var strs = str.split("\r\n");
+		var strs = content.split("\r\n");
 		this.generators = new Array(strs.length);
-		console.log(strs);
 		
+		// Format generators (beware of context, this != self)
 		strs.forEach(function(line) {
 		
 			var l = line.split(";");
@@ -51,13 +65,15 @@ function kernell(ms) {
 			var price_vals = l[1].split(",");
 			var price_o = price_vals[price_vals.length - 1];
 			price_vals.splice(price_vals.length - 1, 1);
+			var price = new number(price_vals, price_o);
 			// Income
 			var income_vals = l[2].split(",");
 			var income_o = income_vals[income_vals.length - 1];
 			income_vals.splice(income_vals.length - 1, 1);
+			var income = new number(income_vals, income_o);
 			
 			// Instantiate generator (and inc cpt)
-			this.generators[cpt] = new generator(cpt++, l[0], new number(price_vals, price_o), new number(income_vals, income_o), l[3]);
+			self.generators[cpt] = new generator(cpt++, l[0], price, income, l[3]);
 			
 		});
 	
@@ -136,31 +152,29 @@ function kernell(ms) {
 	
 	this.printGeneratorHTML = function(id) {
 		var g = this.generators[id];
-		return "<td id='generator_" + id + "' onclick='kernel.addGenerator(" + id + ")'>" + g.name + "<br> x" + g.level + "<br>" + g.price.toString() + "</td>";
-	}
-	
-	this.loadGenerators = function(e) {
-
-		for (var i = 0; i < 12; i++)
-			this.generators[i] = new generator(i, "Cursor_" + i, new number([10], 0), number.ONE(), 1.5);
-		this.initGenerators();
-
+		return "<td id='generator_" + id + "' onclick='k.addGenerator(" + id + ")'>" + g.name + "<br> x" + g.level + "<br>" + g.price.toString() + "</td>";
 	}
 
-	this.initGenerators = function() {
+	this.initGenerators = function(rows, cols) {
 	
 		// Reset table content
 		document.getElementById("table_generators").innerHTML = "";
 	
 		// Fill with this.generators
-		for (var i = 0; i < 3; i++) {
+		for (var i = 0; i < rows; i++) {
+		
 			$("#table_generators").append("<tr>");
-			for (var j = 0; j < 4; j++) {
-				var index = ((i * 4) + j);
-				var g = this.generators[index];
-				$("#table_generators").append(this.printGeneratorHTML(index));
+			
+			for (var j = 0; j < cols; j++) {
+				var index = (i * cols) + j;
+				if (index >= this.generators.length)
+					break;
+				else
+					$("#table_generators").append(this.printGeneratorHTML(((i * cols) + j)));
 			}
+				
 			$("#table_generators").append("</tr>");
+			
 		}
 
 	}

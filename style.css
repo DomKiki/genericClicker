@@ -31,11 +31,15 @@ h2 {
     background-color: white;
 }
 #sectionUpgrade{
+	text-align: center;
     position: relative;
     float: left;
     height: 100%;
     width: 33%;
     background-color: white;
+}
+#file-input {
+	margin-top: 5%;
 }
 #totalUnits{
     margin-top: 40%;
@@ -51,9 +55,6 @@ h2 {
 #zoneClick img{
     vertical-align: middle;
 }
-
-
-
 #generators{
     margin-top: 10%;
     height: 30%;
