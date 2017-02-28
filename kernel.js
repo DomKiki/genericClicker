@@ -193,10 +193,15 @@ function kernel(ms) {
 	this.updateUnitsPerS = function() {
 
 		var s = number.ZERO();
+		
+		// Generators
 		this.generators.forEach(function (g) {
 			s.add(g.income.clone());
 		});
-		this.unitsPerS = s;
+		
+		// Multiplicators
+		
+		this.unitsPerS = s;	
 		
 	}
 	
@@ -326,6 +331,10 @@ function kernel(ms) {
 			
 			// Update multiplicator level
 			this.multiplicators[id].update(1);
+			// Update unitsPerS, unitsPerT and unitsPerC
+			this.updateUnitsPerS();
+			//this.updateUnitsPerT();
+			this.updateUnitsPerC();
 			
 			// Display multiplicator
 			this.updateMultiplicator(id);
