@@ -65,30 +65,29 @@ function number(values, offset) {
 	
 	}
 
-	this.removeLeftZeros = function() {
+	this.removeZeros = function() {
 	
+		// Left
 		var zeros = 0;
 		var j = 0;
-		
 		while (this.vals[j++] == 0) 
 			zeros++;
-			
 		if (zeros != 0)
 			this.vals.splice(0, zeros);
-	
-	}
-	
-	this.removeRightZeros = function() {
-	
-		var zeros = 0;
-		var j = this.vals.length - 1;
-		
+			
+		// Right
+		zeros = 0;
+		j = this.vals.length - 1;
 		while (this.vals[j--] == 0)
 			zeros++;
-			
-		this.vals.splice(this.vals.length - zeros, zeros);
-		this.offset += zeros;
+		if (zeros != 0) {
+			this.vals.splice(this.vals.length - zeros, zeros);
+			this.offset += zeros;
+		}
 	
+		// If empty, push a single 0
+		if (this.vals.length == 0) this.vals.push(0);
+		
 	}
 	
 	/* Compare */
@@ -187,11 +186,7 @@ function number(values, offset) {
 		}
 		
 		// Removing zeros
-		this.removeLeftZeros();
-		this.removeRightZeros();
-		
-		// If result = 0 then this.vals should be empty, so we just push a value into it
-		if (this.vals.length == 0) this.vals.push(0);
+		this.removeZeros();
 		
     }
 
@@ -235,11 +230,7 @@ function number(values, offset) {
         }
 		
 		// Remove zeros
-		this.removeLeftZeros();
-		this.removeRightZeros();
-		
-		// If result = 0 then this.vals should be empty, so we just push a value into it
-		if (this.vals.length == 0) this.vals.push(0);
+		this.removeZeros();
 		
 	}
 	
@@ -251,6 +242,8 @@ function number(values, offset) {
 			
 		// Mult by float
 		if (typeof number === "number") {
+		
+			// Compute
 			for (i = (this.vals.length - 1); i >= 0; i--) {
 				m = Math.floor(this.vals[i] * number);
 				this.vals[i] = m;
@@ -341,6 +334,9 @@ function number(values, offset) {
 			this.vals = ref;
 			
 		}
+		
+		// Remove zeros
+		this.removeZeros();
 		
 	}
 

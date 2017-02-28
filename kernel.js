@@ -21,7 +21,7 @@ function kernel(ms) {
 	this.unitsPerT      = number.ZERO();
 	this.unitsPerS      = number.ZERO();
 	this.unitsPerC      = number.ONE();	
-
+	
 	this.click = function() {
 	
 		this.totalUnits.add(this.unitsPerC);
@@ -139,11 +139,6 @@ function kernel(ms) {
 		this.unitsPerC = this.unitsPerS.clone();
 		this.unitsPerC.mult(this.unitsPerCRatio);
 		
-		this.unitsPerS.log();
-		console.log(" x " + this.unitsPerCRatio);
-		console.log(" = ");
-		this.unitsPerC.log()
-		
 		// Minimum of 1 uPC
 		if (this.unitsPerC.equals(number.ZERO()))
 			this.unitsPerC = number.ONE();
@@ -168,7 +163,7 @@ function kernel(ms) {
 	
 	this.printGeneratorHTML = function(id) {
 		var g = this.generators[id];
-		return "<td id='generator_" + id + "' onclick='k.addGenerator(" + id + ")'>" + g.name + "<br> x" + g.level + "<br>" + g.price.toString() + "</td>";
+		return "<td id='generator_" + id + "' onclick='k.addGenerator(" + id + ")'>" + g.name + "<br>Level " + g.level + "<br>" + g.price.toString() + "</td>";
 	}
 
 	this.initGenerators = function(rows, cols) {
@@ -223,7 +218,7 @@ function kernel(ms) {
 	this.updateGenerator = function(id) {
 	
 		var g = this.generators[id];
-		var s = g.name + "<br> x" + g.level + "<br>" + g.price.toString();
+		var s = g.name + "<br>Level " + g.level + "<br>" + g.price.toString();
 		document.getElementById("generator_" + id).innerHTML = s;
 		
 	}
