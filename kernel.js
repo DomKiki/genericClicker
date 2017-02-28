@@ -13,8 +13,9 @@ function kernel(ms) {
 	// Display
 	this.itemsByRow     = 4;
 	
-	// Buildings
+	// Upgrades
 	this.generators     = null;
+	this.multiplicators = null;
 	
 	// Units
 	this.totalUnits     = number.ZERO();
@@ -40,23 +41,60 @@ function kernel(ms) {
 		var reader = new FileReader();
 		reader.onload = function(e) { 
 		
-			self.formatGenerators(e.target.result); 
-			
+			self.formatFile(e.target.result);
+						
 			var rows = Math.round(self.generators.length / self.itemsByRow);
 			if ((self.generators.length % self.itemsByRow) != 0) 
 				rows++;
 				
 			self.initGenerators(rows, self.itemsByRow);
+			//self.initMultiplicators(rows, self.itemsByRow);
 			
 		};
 		reader.readAsText(file);
 				
 	}
 	
-	this.formatGenerators = function(content) {
+	this.formatFile = function(content) {
 	
+		var target = null;
+		var cpt    = 0;
+		var strs   = content.split("\r\n");
+		this.generators = new Array(strs.length);
+		
+		var gen  = new Array();
+		var mult = new Array();
+		
+		// Fill raw arrays (beware of context, this != self)
+		strs.forEach(function(line) {
+		
+			// Generators
+			if (line == "Generators:")
+				target = "gen";
+			else if (line == "Multiplicators:")
+				target = "mult";
+			else {
+				
+				if (target === "gen") 
+					gen.push(line);
+				else if (target === "mult")
+					mult.push(line);	
+					
+			}
+			
+		});
+		
+		// Format
+		this.formatGenerators(gen);
+		this.formatMultiplicators(mult);
+	
+	}
+	
+	/* --------------------------------- Format ------------------------------- */
+	
+	this.formatGenerators = function(strs) {
+		
 		var cpt  = 0;
-		var strs = content.split("\r\n");
 		this.generators = new Array(strs.length);
 		
 		// Format generators (beware of context, this != self)
@@ -76,9 +114,38 @@ function kernel(ms) {
 			income_vals.splice(income_vals.length - 1, 1);
 			var income = new number(income_vals, income_o);
 			
-			// Instantiate generator (and inc cpt)
+			// Instantiate generator
 			self.generators[cpt] = new generator(cpt++, l[0], price, income, l[3]);
 			
+		});
+	
+	}
+	
+	this.formatMultiplicators = function(strs) {
+	
+		var cpt = 0;
+		this.multiplicators = new Array(strs.length);
+		
+		// Format multiplicators
+		strs.forEach(function(line) {
+		
+			var l = line.split(";");
+			
+			// Price
+			var price_vals = l[1].split(",");
+			var price_o = parseInt(price_vals[price_vals.length - 1]);
+			price_vals.splice(price_vals.length - 1, 1);
+			var price = new number(price_vals, price_o);
+			
+			// Multiplicator
+			var mult_vals = l[2].split(",");
+			var mult_o = parseInt(mult_vals[mult_vals.length - 1]);
+			mult_vals.splice(mult_vals.length - 1, 1);
+			var mult = new number(mult_vals, mult_o);
+			
+			// Instantiate multiplicator
+			self.multiplicators[cpt] = new multiplicator(cpt++, l[0], price, mult, l[3]);
+		
 		});
 	
 	}
@@ -221,6 +288,63 @@ function kernel(ms) {
 		var s = g.name + "<br>Level " + g.level + "<br>" + g.price.toString();
 		document.getElementById("generator_" + id).innerHTML = s;
 		
+	}
+	
+	/* ----------------------------- Multiplicators ----------------------------- */
+	
+	this.initMultiplicators = function(rows, cols) {
+	
+		// Reset table content
+		document.getElementById("table_multiplicators").innerHTML = "";
+	
+		// Fill with this.generators
+		for (var i = 0; i < rows; i++) {
+		
+			$("#table_multiplicators").append("<tr>");
+			
+			for (var j = 0; j < cols; j++) {
+				var index = (i * cols) + j;
+				if (index < this.multiplicators.length)
+					$("#table_multiplicators").append(this.printMultiplicatorHTML(index));
+				else
+					break;
+			}
+				
+			$("#table_multiplicators").append("</tr>");
+			
+		}
+	
+	}
+	
+	this.addMultiplicator = function(id) {
+			
+		// If enough units in bank
+		if (this.totalUnits.isGreater(this.multiplicators[id].price)) {
+		
+			// Substract from bank
+			this.totalUnits.sub(this.multiplicators[id].price);
+			
+			// Update multiplicator level
+			this.multiplicators[id].update(1);
+			
+			// Display multiplicator
+			this.updateMultiplicator(id);
+			
+		}
+
+	}
+	
+	this.updateMultiplicator = function(id) {
+	
+		var m = this.multiplicators[id];
+		var s = m.name + "<br>Level " + m.level + "<br>" + m.price.toString();
+		document.getElementById("multiplicator_" + id).innerHTML = s;
+		
+	}
+	
+	this.printMultiplicatorHTML = function(id) {
+		var m = this.multiplicators[id];
+		return "<td id='multiplicator_" + id + "' onclick='k.addMultiplicator(" + id + ")'>" + m.name + "<br>Level " + m.level + "<br>" + m.price.toString() + "</td>";
 	}
 	
 }
