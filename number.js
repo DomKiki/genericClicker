@@ -273,7 +273,7 @@ function number(values, offset) {
 		
 		// Mult by number (structure)
 		else if (typeof number === "object") {
-		
+				
 			var finalV = [];	
 			var maxI   = this.vals.length - 1;
 			var maxJ   = number.vals.length - 1;
@@ -297,10 +297,9 @@ function number(values, offset) {
 				}
 			}
 			
-			
 			// Format finalV[0] (ref)
 			var pad = finalV[0][finalV[0].length - 1];
-			finalV[0][finalV[0].length - 1] = 0;
+			finalV[0].splice(finalV[0].length - 1, 1);
 			for (i = 1; i < pad; i++)
 				finalV[0].push(0);
 			var ref = finalV[0];	

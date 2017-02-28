@@ -3,11 +3,14 @@
 	
 - Kernel
     setInterval() 		Units display
-	formatGenerators() + formatMultiplicators()   ==> Optimize (merge)
-	initGenerators()   + initMultiplicators()     ==> Same
-	addGenerator()     + addMultiplicator         ==> Same
+	Merge all generators / multiplicators duplicate functions (init, format ...)
 	
 - Default.csv
 	simplify informations with global informations (i.e: price to income ratio, decay rate)
 	
-- Save game as string
+- Save game 
+	- String to copy into Clipboard
+	- Browser Cache
+
+
+- Better class structure : inherit from super-object with basic functions (log, updatePrice, updateLevel ...)

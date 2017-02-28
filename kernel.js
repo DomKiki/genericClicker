@@ -8,7 +8,7 @@ function kernel(ms) {
 	this.tickMs         = this.tickDef;
 	
 	// Ratios
-	this.unitsPerCRatio = 0.4;			// 40% of totalUnitsPerS
+	this.unitsPerCRatio = 0.3;			// 30% of totalUnitsPerS
 	
 	// Display
 	this.itemsByRow     = 4;
@@ -194,12 +194,18 @@ function kernel(ms) {
 
 		var s = number.ZERO();
 		
-		// Generators
 		this.generators.forEach(function (g) {
-			s.add(g.income.clone());
+			
+			// Generator income
+			var income = g.income.clone();
+			
+			// Multiplicator
+			if ((g.id < self.multiplicators.length) && (self.multiplicators[g.id].level > 0))
+				income.mult(self.multiplicators[g.id].multi);
+			
+			s.add(income);
+			
 		});
-		
-		// Multiplicators
 		
 		this.unitsPerS = s;	
 		
@@ -336,7 +342,10 @@ function kernel(ms) {
 			//this.updateUnitsPerT();
 			this.updateUnitsPerC();
 			
-			// Display multiplicator
+			// Display multiplicator, unitsPerS, unitsPerC and totalUnits
+			this.display("unitsPerS",  this.unitsPerS);
+			this.display("unitsPerC",  this.unitsPerC);
+			this.display("totalUnits", this.totalUnits);
 			this.updateMultiplicator(id);
 			
 		}
