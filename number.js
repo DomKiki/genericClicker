@@ -3,7 +3,10 @@
 number.ZERO = function() { return new number([0], 0); }
 number.ONE  = function() { return new number([1], 0); }
 
-var labels = [null, "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion"];
+var labels = [null, "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", 
+              "Decillion", "Undecillion", "Duodecillion", "Tredecillion", "Quattuordecillion", "Quindecillion", "Sexdecillion", "Septendecillion", "Octodecillion", "Novemdecillion",
+			  "Vingtillion", "Unvingtillion", "Duovingtillion", "Trevingtillion", "Quattuorvingtillion", "Quinvingtillion", "Sexvingtillion", "Septenvingtillion", "Octovingtillion", "Novemvingtillion", 
+			  "Trigintillion"];
 
 function number(values, offset) {
 

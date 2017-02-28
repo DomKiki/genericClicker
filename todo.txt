@@ -10,3 +10,5 @@
 	multiplicators
 	simplify informations with global informations (i.e: price to income ratio, decay rate)
 	
+- Save game as string
+	
