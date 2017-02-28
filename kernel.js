@@ -48,7 +48,7 @@ function kernel(ms) {
 				rows++;
 				
 			self.initGenerators(rows, self.itemsByRow);
-			//self.initMultiplicators(rows, self.itemsByRow);
+			self.initMultiplicators(rows, self.itemsByRow);
 			
 		};
 		reader.readAsText(file);
