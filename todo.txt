@@ -1,8 +1,14 @@
+- Implement Multiplicators
+
 - Number
-    mult() 				Units < 0 ==> Back-propagation
-  
+    mult() 				Units < 0 				  ==> Back-propagation
+	sub()				result type ([0, XXX], Y) ==> Ignore 0
+							  ([XXX,..., 000], Y) ==> Same
+	
 - Kernel
     setInterval() 		Units display
-	formatGenerators()	Fill generators[] with data from file
 	
-- Catch Raikou
+- Default.csv
+	multiplicators
+	simplify informations with global informations (i.e: price to income ratio, decay rate)
+	

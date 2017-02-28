@@ -3,7 +3,7 @@
 number.ZERO = function() { return new number([0], 0); }
 number.ONE  = function() { return new number([1], 0); }
 
-var labels = ["", "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion"];
+var labels = [null, "Thousand", "Million", "Billion", "Trillion", "Quadrillion", "Quintillion", "Sextillion", "Septillion", "Octillion", "Nonillion", "Decillion"];
 
 function number(values, offset) {
 
@@ -11,38 +11,10 @@ function number(values, offset) {
 
 	this.vals   = values;
 	this.offset = offset;
-
+	
 	/* Functions */
 	
 	this.clone = function() { return new number(this.vals.slice(), this.offset); }
-	
-	this.isGreater = function (number) {
-	
-		
-		var myL  = this.vals.length + this.offset;
-		var numL = number.vals.length + number.offset;
-		
-		if (myL != numL) return (myL > numL);
-		else {
-		
-			var i = 0;
-			while (i < this.vals.length) {
-			
-				var myV  = this.vals[i];
-				var numV = number.vals[i];
-				if (numV == undefined) return true;
-				else if (myV != numV)  return (myV > numV);
-				else i++;
-			}
-			
-			// Equals
-			if (myV == numV) return true;
-			// Unreached (normally)
-			return (this.vals.length > number.vals.length);
-			
-		}
-		
-	}
 	
 	this.pad = function (amount, num, side) {
 	
@@ -71,9 +43,13 @@ function number(values, offset) {
 			str = this.vals[0].toString();
 		
 		// Unit
-		console.log(this.vals.length + " + " + this.offset + " - 1 = " + (this.vals.length+this.offset-1));
 		var label = labels[this.vals.length + this.offset - 1];
-		if (label != "") str += " " + label;
+		if (label) {
+			str += " " + label;
+			// Plural
+			if (this.vals[0] > 1)
+				str += "s";
+		}
 		
 		return str;
 		
@@ -87,6 +63,51 @@ function number(values, offset) {
 				str = "0" + str;
 		return str;
 	
+	}
+
+	/* Compare */
+	
+	this.equals = function (number) {
+	
+		// Unequal values lengths and offsets
+		if ((this.offset != number.offset) || (this.vals.length != number.vals.length))
+			return false;
+			
+		// Values check
+		for (var i = 0; i < this.vals.length; i++)
+			if (this.vals[i] != number.vals[i])
+				return false;
+		
+		return true;
+	
+	}
+	
+	this.isGreater = function (number) {
+	
+		
+		var myL  = this.vals.length   + this.offset;
+		var numL = number.vals.length + number.offset;
+		
+		if (myL != numL) return (myL > numL);
+		else {
+		
+			var i = 0;
+			while (i < this.vals.length) {
+			
+				var myV  = this.vals[i];
+				var numV = number.vals[i];
+				if (numV == undefined) return true;
+				else if (myV != numV)  return (myV > numV);
+				else i++;
+			}
+			
+			// Equals
+			if (myV == numV) return true;
+			// Unreached (normally)
+			return (this.vals.length > number.vals.length);
+			
+		}
+		
 	}
 		
 	/* Operations */
@@ -198,7 +219,6 @@ function number(values, offset) {
 			
 		// Mult by float
 		if (typeof number === "number") {
-			
 			for (i = (this.vals.length - 1); i >= 0; i--) {
 				m = Math.floor(this.vals[i] * number);
 				this.vals[i] = m;

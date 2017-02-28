@@ -14,15 +14,13 @@
 		
 			var k = new kernel(100);
 		
-			$(document).ready(function () {				
-				
-				var updateTotalUnitsInterval = function() {
-					k.updateTotalUnits();
-					k.display("totalUnits", k.totalUnits);
-				}
+			$(document).ready(function () {
 				
 				// 1000 -> tickMs update useless, setInterval called once
-				setInterval(updateTotalUnitsInterval(), 1000);
+				setInterval(function() {
+					k.updateTotalUnits();
+					k.display("totalUnits", k.totalUnits);
+				}, 1000);
 				
 			});
 
@@ -62,6 +60,9 @@
 
 			<p id="unitsPerS">0</p>
 			<p>U / s</p>
+			
+			<p id="unitsPerC">1</p>
+			<p>U / Click</p>
 
 		</section>
 

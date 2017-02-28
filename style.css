@@ -45,12 +45,14 @@ h2 {
     margin-top: 40%;
     font-size: 50px;
 }
-#unitsPerS{
+#unitsPerS, #unitsPerC {
     font-size: 35px;
+}
+#unitsPerC {
+	margin-top: 5%;
 }
 #zoneClick{
     height: 30%;
-
 }
 #zoneClick img{
     vertical-align: middle;

@@ -3,21 +3,24 @@ function kernel(ms) {
 	// Context persistency
 	var self = this;
 
-	this.tickDef    = 1000;
-	this.tickUser   = ms;
-	this.tickMs     = this.tickDef;
+	this.tickDef        = 1000;
+	this.tickUser       = ms;
+	this.tickMs         = this.tickDef;
+	
+	// Ratios
+	this.unitsPerCRatio = 0.4;			// 40% of totalUnits
 	
 	// Display
-	this.itemsByRow = 4;
+	this.itemsByRow     = 4;
 	
 	// Buildings
-	this.generators = null;
+	this.generators     = null;
 	
-	// Values
-	this.totalUnits = number.ZERO();
-	this.unitsPerT  = number.ZERO();
-	this.unitsPerS  = number.ZERO();
-	this.unitsPerC  = number.ONE();
+	// Units
+	this.totalUnits     = number.ZERO();
+	this.unitsPerT      = number.ZERO();
+	this.unitsPerS      = number.ZERO();
+	this.unitsPerC      = number.ONE();
 
 	this.click = function() {
 	
@@ -63,12 +66,13 @@ function kernel(ms) {
 		
 			// Price
 			var price_vals = l[1].split(",");
-			var price_o = price_vals[price_vals.length - 1];
+			var price_o = parseInt(price_vals[price_vals.length - 1]);
 			price_vals.splice(price_vals.length - 1, 1);
 			var price = new number(price_vals, price_o);
+			
 			// Income
 			var income_vals = l[2].split(",");
-			var income_o = income_vals[income_vals.length - 1];
+			var income_o = parseInt(income_vals[income_vals.length - 1]);
 			income_vals.splice(income_vals.length - 1, 1);
 			var income = new number(income_vals, income_o);
 			
@@ -105,15 +109,14 @@ function kernel(ms) {
 	
 	this.updateUnitsPerT = function() {
 		
-		var u     = this.unitsPerS.clone();
-		var tick  = Math.floor(1000 / this.tickMs);
+		var u    = this.unitsPerS.clone();
+		var tick = Math.floor(1000 / this.tickMs);
 		
 		// If offset = 0, check that number can be divided by (1/tick)
 		if ((u.offset != 0) || 
-		    (u.offset == 0) && (u.vals[0] >= (1.0 / tick))) {
+		    ((u.offset == 0) && (u.vals[0] >= (1.0 / tick)))) {
 			u.mult((1.0 / tick));
 			this.unitsPerT = u;
-			console.log(this.unitsPerS + " U/s => " + this.unitsPerT + " U/" + this.tickMs + " ms");
 		}
 		else
 			this.unitsPerT = number.ZERO();
@@ -131,7 +134,15 @@ function kernel(ms) {
 	}
 	
 	this.updateUnitsPerC = function() {
-		// Code is somewhere around here
+		
+		// % of unitsPerS
+		this.unitsPerC = this.unitsPerS.clone();
+		this.unitsPerC.mult(this.unitsPerCRatio);
+		
+		// Minimum of 1 uPC
+		if (this.unitsPerC.equals(number.ZERO()))
+			this.unitsPerC = number.ONE();
+		
 	}
 	
 	/* ------------------------------ Generators ------------------------------ */
@@ -167,10 +178,10 @@ function kernel(ms) {
 			
 			for (var j = 0; j < cols; j++) {
 				var index = (i * cols) + j;
-				if (index >= this.generators.length)
-					break;
+				if (index < this.generators.length)
+					$("#table_generators").append(this.printGeneratorHTML(index));
 				else
-					$("#table_generators").append(this.printGeneratorHTML(((i * cols) + j)));
+					break;
 			}
 				
 			$("#table_generators").append("</tr>");
@@ -191,12 +202,13 @@ function kernel(ms) {
 			this.generators[id].update(1);
 			// Update unitsPerS, unitsPerT and unitsPerC
 			this.updateUnitsPerS();
-			this.updateUnitsPerT();
+			//this.updateUnitsPerT();
 			this.updateUnitsPerC();
 			
-			// Display generatorm unitsPerS and totalUnits
+			// Display generator, unitsPerS, unitsPerC and totalUnits
 			this.updateGenerator(id);
 			this.display("unitsPerS",  this.unitsPerS);
+			this.display("unitsPerC",  this.unitsPerC);
 			this.display("totalUnits", this.totalUnits);
 			
 		}
