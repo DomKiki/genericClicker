@@ -8,7 +8,7 @@ function kernel(ms) {
 	this.tickMs         = this.tickDef;
 	
 	// Ratios
-	this.unitsPerCRatio = 0.4;			// 40% of totalUnits
+	this.unitsPerCRatio = 0.4;			// 40% of totalUnitsPerS
 	
 	// Display
 	this.itemsByRow     = 4;
@@ -20,7 +20,7 @@ function kernel(ms) {
 	this.totalUnits     = number.ZERO();
 	this.unitsPerT      = number.ZERO();
 	this.unitsPerS      = number.ZERO();
-	this.unitsPerC      = number.ONE();
+	this.unitsPerC      = number.ONE();	
 
 	this.click = function() {
 	
@@ -138,6 +138,11 @@ function kernel(ms) {
 		// % of unitsPerS
 		this.unitsPerC = this.unitsPerS.clone();
 		this.unitsPerC.mult(this.unitsPerCRatio);
+		
+		this.unitsPerS.log();
+		console.log(" x " + this.unitsPerCRatio);
+		console.log(" = ");
+		this.unitsPerC.log()
 		
 		// Minimum of 1 uPC
 		if (this.unitsPerC.equals(number.ZERO()))

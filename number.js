@@ -65,6 +65,32 @@ function number(values, offset) {
 	
 	}
 
+	this.removeLeftZeros = function() {
+	
+		var zeros = 0;
+		var j = 0;
+		
+		while (this.vals[j++] == 0) 
+			zeros++;
+			
+		if (zeros != 0)
+			this.vals.splice(0, zeros);
+	
+	}
+	
+	this.removeRightZeros = function() {
+	
+		var zeros = 0;
+		var j = this.vals.length - 1;
+		
+		while (this.vals[j--] == 0)
+			zeros++;
+			
+		this.vals.splice(this.vals.length - zeros, zeros);
+		this.offset += zeros;
+	
+	}
+	
 	/* Compare */
 	
 	this.equals = function (number) {
@@ -160,13 +186,12 @@ function number(values, offset) {
 			
 		}
 		
-		// Removing zeros and refreshing offset
-		i = this.vals.length;
-			while ((this.vals[--i] == 0) && (i > 0))
-				this.offset++; 
-		this.vals.splice(this.vals.length - this.offset, this.offset);
+		// Removing zeros
+		this.removeLeftZeros();
+		this.removeRightZeros();
+		
 		// If result = 0 then this.vals should be empty, so we just push a value into it
-		//if (this.vals.length == 0) this.vals.push(0);
+		if (this.vals.length == 0) this.vals.push(0);
 		
     }
 
@@ -208,6 +233,13 @@ function number(values, offset) {
 			i--;
 			
         }
+		
+		// Remove zeros
+		this.removeLeftZeros();
+		this.removeRightZeros();
+		
+		// If result = 0 then this.vals should be empty, so we just push a value into it
+		if (this.vals.length == 0) this.vals.push(0);
 		
 	}
 	
