@@ -6,6 +6,7 @@ function generator(d, n, p, i, r) {
 	this.price       = p;
 	this.base_income = i;
     this.rate        = r;
+	this.base_rate   = r;
 	
 	// Initial values
     this.level       = 0;
@@ -35,12 +36,21 @@ function generator(d, n, p, i, r) {
 	}
 	
 	this.update = function(amount) { 
-	
+		
 		this.level += amount;
 		this.updatePrice();
 		this.updateIncome();
 		this.updateRate(amount);
 		
+	}
+	
+	this.reset = function() {
+	
+		this.level  = 0;
+		this.income = number.ZERO();
+		this.price  = this.base_price.clone();
+		this.rate   = this.base_rate;
+	
 	}
 	
 }

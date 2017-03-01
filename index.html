@@ -24,7 +24,7 @@
 				}, 1000);
 				
 			});
-
+			
 		</script>
 	</head>
 
@@ -33,9 +33,8 @@
 		<section id="sectionUpgrade">
 		
 			<input type="file" id="file-input" />
-			<script>
-				document.getElementById('file-input').addEventListener('change', k.readSingleFile, false);
-			</script>
+			<br><br>
+			<input type="text" id="loadTxt" /> <button id="load">Load</button>
 
 			<section id="multiplicators">
 				<h2>Multiplicators</h2>
@@ -64,10 +63,35 @@
 			
 			<p id="unitsPerC">1</p>
 			<p>U / Click</p>
+			
+			<button id="save">Save</button>
 
 		</section>
 
 		<section id="sectionStats"> </section>
+		
+		<!-------------------------------- Event Listeners --------------------------------->
+		<script>
+		
+			// Load Config File
+			document.getElementById('file-input').addEventListener('change', k.readSingleFile, false);
+			
+			// Save game
+			document.getElementById('save').addEventListener('click', function() {
+				var s = k.saveState();
+				if (s) prompt("Ctrl+C -> to copy into clipboard", s);
+				else   alert("Init game first !");
+				
+			}, false);
+			
+			// Load game
+			document.getElementById('load').addEventListener('click', function() {
+				var l = k.loadState(document.getElementById('loadTxt').value);
+				if (l != 0)	alert("Error " + l + " in loading");
+				k.loadState(document.getElementById('loadTxt').value = "";
+			}, false);
+			
+		</script>
 		
 	</body>
 </html>

@@ -32,7 +32,6 @@ function kernel(ms) {
 	
 	/* --------------------------------- I / O -------------------------------- */
 	
-	
 	this.readSingleFile = function(e) {
 		
 		var file = e.target.files[0];
@@ -87,6 +86,94 @@ function kernel(ms) {
 		// Format
 		this.formatGenerators(gen);
 		this.formatMultiplicators(mult);
+	
+	}
+	
+	this.saveState = function() {
+	
+		if (!this.generators)
+			return null;
+	
+		var units = this.totalUnits.export() + "/" + this.unitsPerS.export();
+		
+		var gen   = "";
+		this.generators.forEach(function(g, i) { 
+			gen += g.level;
+			if (i < (self.generators.length - 1))
+				gen += "/"; 
+		});
+		
+		var mult  = "";
+		this.multiplicators.forEach(function(m, i) { 
+			mult += m.level;
+			if (i < (self.multiplicators.length - 1))
+				mult += "/"; 
+		});
+		
+		return units + ";" + gen + ";" + mult;
+		
+	}
+	
+	this.loadState = function(save) {
+	
+		// Checks
+			// Game init
+		if ((!this.generators) && (!this.multiplicators))
+			return 1;
+			// Syntax
+		var content = save.split(";");
+		if (content.length < 3)
+			return 2;
+				// Units
+		var units = content[0].split("/");
+		if (units.length < 2)
+			return 2;
+				// Generators
+		var gen = content[1].split("/");
+		if (gen.length < this.generators.length)
+			return 2;
+				// Multiplicators
+		var mult = content[2];
+		if (mult.length < this.multiplicators.length)
+			return 2;
+	
+		// Units
+		var tU = units[0].split(",");
+		var tU_o = parseInt(tU[tU.length - 1]);
+		tU.splice(tU.length - 1, 1);
+		tU.forEach(function(u) { u = parseInt(u); });
+
+		var uPS = units[1].split(",");
+		var uPS_o = parseInt(uPS[uPS.length - 1]);
+		uPS.splice(uPS.length - 1, 1);
+		uPS.forEach(function(u) { u = parseInt(u); });
+		
+		this.totalUnits = new number(tU, tU_o);
+		this.unitsPerS = new number(uPS, uPS_o);
+		this.updateUnitsPerC();
+		
+		this.display("unitsPerS",  this.unitsPerS);
+		this.display("unitsPerC",  this.unitsPerC);
+		
+		// Generators
+		this.generators.forEach(function(g) { g.reset(); });
+		gen.forEach(function(g, i) { 
+			if (parseInt(g) > 0) {
+				self.generators[i].update(parseInt(g)); 
+				self.updateGenerator(i);
+			}
+		});
+		
+		// Multiplicators
+		this.multiplicators.forEach(function(m) { m.reset(); });
+		mult.forEach(function(m, i) { 
+			if (parseInt(m) > 0) {
+				self.multiplicators[i].update(parseInt(m)); 
+				self.updateMultiplicator(i);
+			}
+		});
+		
+		return 0;
 	
 	}
 	
@@ -160,17 +247,17 @@ function kernel(ms) {
 
 	this.updateTotalUnits = function() {
 	
-		// One tick or one second ?
+		/* One tick or one second ?
 		if (this.unitsPerT != 0) {
 			this.totalUnits.add(this.unitsPerT);
 			if (this.tickMs == this.tickDef)
 				this.tickMs = this.tickUser;
 		}
-		else { 
+		else { */
 			this.totalUnits.add(this.unitsPerS);
-			if (this.tickMs == this.tickUser)
+			/*if (this.tickMs == this.tickUser)
 				this.tickMs = this.tickDef;
-		}
+		}*/
 			
 	}
 	

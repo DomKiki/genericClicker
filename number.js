@@ -141,7 +141,7 @@ function number(values, offset) {
 	/* Operations */
 	
 	this.add = function (number) {
-	
+
 		// Equalize offsets
 		if (this.offset != number.offset) {
 			var diff = this.offset - number.offset;
@@ -167,7 +167,7 @@ function number(values, offset) {
 		// Proper adding
 		for (var i = (this.vals.length - 1); i >= 0; i--) {
 		
-			var s = this.vals[i] + number.vals[i];
+			var s = parseInt(this.vals[i]) + parseInt(number.vals[i]);
 			
 			if (s >= 1000) {
 			
@@ -343,6 +343,7 @@ function number(values, offset) {
 	}
 
 	/* Debug */
+	
 	this.log = function () {
 	
 		var s = "[";
@@ -354,6 +355,17 @@ function number(values, offset) {
 		s += "], " + this.offset;
 		console.log(s);
 		
+	}
+	
+	this.export = function() {
+	
+		var s = "";
+		for (var i = 0; i < this.vals.length; i++) 
+			s += this.vals[i].toString() + ",";
+		s += this.offset.toString();
+		
+		return s;
+	
 	}
 
 }

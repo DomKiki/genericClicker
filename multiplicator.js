@@ -6,6 +6,7 @@ function multiplicator(d, n, p, m, r) {
 	this.price      = p;
 	this.base_multi = m;
 	this.rate       = r;
+	this.base_rate  = r;
 	
 	// Initial values
 	this.level      = 0;
@@ -40,6 +41,15 @@ function multiplicator(d, n, p, m, r) {
 		this.updatePrice();
 		this.updateMulti();
 		this.updateRate(amount);
+	
+	}
+	
+	this.reset = function() {
+	
+		this.level  = 0;
+		this.multi = number.ONE();
+		this.price  = this.base_price.clone();
+		this.rate   = this.base_rate;
 	
 	}
 	
