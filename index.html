@@ -88,7 +88,7 @@
 			document.getElementById('load').addEventListener('click', function() {
 				var l = k.loadState(document.getElementById('loadTxt').value);
 				if (l != 0)	alert("Error " + l + " in loading");
-				k.loadState(document.getElementById('loadTxt').value = "";
+				document.getElementById('loadTxt').value = "";
 			}, false);
 			
 		</script>
