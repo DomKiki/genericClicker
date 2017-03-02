@@ -237,8 +237,32 @@ function number(values, offset) {
 		
 	}
 	
-	// What about values m < 0 ???
-	// Should back-propagate decimal part to lower units
+	/*
+		this.vals.length --> len
+		Test flow :
+					+-- Float
+					| |
+					| +-- m >= 1000
+					| | |
+					| | +-- i = 0
+					| | +-- i > 0
+					| | 
+					| +-- m < 1
+					| | |
+					| | +-- i < (len - 1)
+					| | | |
+					| | | +-- offset > 0
+					| | | +-- offset = 0
+					| | |
+					| | +-- i >= (len - 1)
+					| |
+					| +-- 1 <= m < 1000
+					|
+					+-- Number Structure
+					|
+					|...
+	
+	*/
 	this.mult = function (number) {
 	
 		var i, j, m;
@@ -246,27 +270,61 @@ function number(values, offset) {
 		// Mult by float
 		if (typeof number === "number") {
 		
-			// Compute
 			for (i = (this.vals.length - 1); i >= 0; i--) {
-				m = Math.floor(this.vals[i] * number);
-				this.vals[i] = m;
-			}
-			
-			// Check no value > 1000
-			for (i = (this.vals.length - 1); i >= 0; i--) {
-				m = this.vals[i];
+		
+				// Compute
+				m = this.vals[i] * number;
+				
+				// Forward-propagation (values >= 1000)
 				if (m >= 1000) {
+				
 					var thous = Math.floor(m / 1000);
 					var units = m - (1000 * Math.floor(m / 1000));
+					
+					// First value
 					if (i == 0) {
+					
 						this.vals.unshift(thous); 
 						this.vals[1] = units;
+						
 					}
+					
 					else {
+					
 						this.vals[i] = units;
 						this.vals[i - 1] += thous; 
+						
 					}
+					
 				}
+				// Back-propagation (values < 1)
+				else if (m < 1) {
+				
+					// Last value
+					if (i == (this.vals.length - 1)) {
+					
+						// No offset to decrement
+						if (this.offset == 0)
+							this.vals[i] = 0;
+							
+						else {
+							this.vals[this.vals.length] = Math.floor(m * 1000);
+							this.vals[i] = 0;
+							this.offset--;
+						}
+						
+					}
+					
+					else {
+						this.vals[i] = 0;
+						this.vals[i + 1] += Math.floor(m * 1000);
+					}
+				
+				}
+				// Default 
+				else
+					this.vals[i] = Math.floor(m);
+				
 			}
 			
 		}
