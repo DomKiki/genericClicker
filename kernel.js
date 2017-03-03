@@ -21,7 +21,7 @@ function kernel(ms) {
 	this.totalUnits     = number.ZERO();
 	this.unitsPerT      = number.ZERO();
 	this.unitsPerS      = number.ZERO();
-	this.unitsPerC      = number.ONE();	
+	this.unitsPerC      = new number([1],10); //number.ONE();	
 	
 	this.click = function() {
 	
@@ -86,6 +86,11 @@ function kernel(ms) {
 		// Format
 		this.formatGenerators(gen);
 		this.formatMultiplicators(mult);
+		
+		//
+		for (var i = 0; i < 68; i++)
+			this.generators[0].update(1);
+		//
 	
 	}
 	
@@ -202,7 +207,7 @@ function kernel(ms) {
 			var income = new number(income_vals, income_o);
 			
 			// Instantiate generator
-			self.generators[cpt] = new generator(cpt++, l[0], price, income, l[3]);
+			self.generators[cpt] = new generator(cpt++, l[0], price, income, parseFloat(l[3]));
 			
 		});
 	
@@ -231,7 +236,7 @@ function kernel(ms) {
 			var mult = new number(mult_vals, mult_o);
 			
 			// Instantiate multiplicator
-			self.multiplicators[cpt] = new multiplicator(cpt++, l[0], price, mult, l[3]);
+			self.multiplicators[cpt] = new multiplicator(cpt++, l[0], price, mult, parseFloat(l[3]));
 		
 		});
 	

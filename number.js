@@ -254,9 +254,15 @@ function number(values, offset) {
 					| | | +-- offset > 0
 					| | | +-- offset = 0
 					| | |
-					| | +-- i >= (len - 1)
+					| | +-- i = (len - 1)
 					| |
 					| +-- 1 <= m < 1000
+					|   |
+					|   +-- (i = (len - 1)) XNOR (offset = 0)
+					|   +-- else
+					|     |
+					|     +-- i = (len - 1)
+					|     +-- offset = 0
 					|
 					+-- Number Structure
 					|
@@ -267,9 +273,9 @@ function number(values, offset) {
 	
 		var i, j, m;
 			
-		// Mult by float
+		// Mult by float < 1000
 		if (typeof number === "number") {
-		
+			
 			for (i = (this.vals.length - 1); i >= 0; i--) {
 		
 				// Compute
@@ -279,7 +285,7 @@ function number(values, offset) {
 				if (m >= 1000) {
 				
 					var thous = Math.floor(m / 1000);
-					var units = m - (1000 * Math.floor(m / 1000));
+					var units = Math.floor(m - (1000 * thous));
 					
 					// First value
 					if (i == 0) {
@@ -287,9 +293,7 @@ function number(values, offset) {
 						this.vals.unshift(thous); 
 						this.vals[1] = units;
 						
-					}
-					
-					else {
+					} else {
 					
 						this.vals[i] = units;
 						this.vals[i - 1] += thous; 
@@ -306,7 +310,6 @@ function number(values, offset) {
 						// No offset to decrement
 						if (this.offset == 0)
 							this.vals[i] = 0;
-							
 						else {
 							this.vals[this.vals.length] = Math.floor(m * 1000);
 							this.vals[i] = 0;
@@ -323,7 +326,25 @@ function number(values, offset) {
 				}
 				// Default 
 				else
-					this.vals[i] = Math.floor(m);
+				
+					// If both lastEl and offset0 are true or false
+					if (((i == (this.vals.length - 1)) && (this.offset == 0)) || ((i != (this.vals.length - 1)) && (this.offset != 0)))// (lastEl == offset0)
+						this.vals[i] = Math.floor(m);
+					else {
+					
+						// offset0 false
+						if (i == (this.vals.length - 1)) {
+							this.vals[this.vals.length] = Math.floor((m - Math.floor(m)) * 1000);
+							this.vals[i] = Math.floor(m);
+							this.offset--;
+						}
+						// lastEl false
+						else if (this.offset == 0) {
+							this.vals[i] = Math.floor(m);
+							this.vals[i + 1] += Math.floor((m - Math.floor(m)) * 1000);
+						}
+						
+					}
 				
 			}
 			
@@ -331,6 +352,8 @@ function number(values, offset) {
 		
 		// Mult by number (structure)
 		else if (typeof number === "object") {
+				
+			console.log(this + " x " + number + " = ");	
 				
 			var finalV = [];	
 			var maxI   = this.vals.length - 1;
@@ -344,16 +367,23 @@ function number(values, offset) {
 					var oJ  = number.offset + (maxJ - j);
 					var off = oI + oJ;
 					m       = this.vals[i] * number.vals[j];
-					
+					console.log("("+i+","+j+") m = "+m+", offset " +off);
 					// 0 <= m <= 998'001 (999x999)
 					// Format : [ thousands, units, offset ] (> 1000) OR [ units, offset ]
-					if (m >= 1000) 
-						finalV.push([Math.floor(m / 1000), m - (1000 * Math.floor(m / 1000)), off]);
-					else 
+					if (m >= 1000) {
+						var thous = Math.floor(m / 1000);
+						var units = m - (1000 * Math.floor(m / 1000));
+						console.log("[" + thous + "," + units + "," + off + "]");
+						finalV.push([thous, units, off]); }
+					else {
 						finalV.push([m, off]);
+						console.log(finalV[finalV.length - 1]);
+					}
 					
 				}
 			}
+			
+			console.log(finalV);
 			
 			// Format finalV[0] (ref)
 			var pad = finalV[0][finalV[0].length - 1];
@@ -384,15 +414,14 @@ function number(values, offset) {
 				}
 			
 			// Offset
-			this.offset = 0;
-			i = ref.length;
-			while (ref[--i] == 0)
-				this.offset++;
+			if (this.offset < number.offset)
+				this.offset = number.offset;
 			
 			// Vals
-			ref.splice(ref.length - this.offset, this.offset);
 			this.vals = ref;
 			
+			this.log();
+						
 		}
 		
 		// Remove zeros

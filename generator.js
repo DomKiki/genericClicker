@@ -31,16 +31,40 @@ function generator(d, n, p, i, r) {
 	
 	this.updateRate = function(amount) {
 	
-		this.rate *= (1 + (amount * 0.1));
+		if (typeof this.rate === "number") {
+	
+			this.rate *= (1 + (amount * 0.1)); 
+		
+			// Convert to number if getting big
+			if (this.rate >= 1000) {
+				
+				var n = new number([0],0);
+				while (this.rate >= 1000) {
+					n.offset++;
+					this.rate = Math.floor(this.rate / 1000);
+				}
+				n.vals[0] = this.rate;
+				this.rate = n.clone();
+				
+			}
+			
+		}
+		
+		else if (typeof this.rate === "object") {
+		
+			this.rate.mult(1 + (amount * 0.1)); 
+			console.log("rate x " + (1 + (amount * 0.1)) + " => " + this.rate);
+			
+		}
 	
 	}
 	
 	this.update = function(amount) { 
 		
 		this.level += amount;
+		this.updateRate(amount);
 		this.updatePrice();
 		this.updateIncome();
-		this.updateRate(amount);
 		
 	}
 	
